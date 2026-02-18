@@ -26,6 +26,9 @@ class Settings:
     # Similarity threshold (treat as potential duplicate above this %)
     DUPLICATION_THRESHOLD_PCT: float = float(os.getenv("DUPLICATION_THRESHOLD_PCT", "70"))
 
+    # OCR: use Azure vision (gpt-4o-mini) for image PDFs when True; else Tesseract
+    USE_AZURE_OCR: bool = os.getenv("USE_AZURE_OCR", "false").lower() in ("true", "1", "yes")
+
     # OCR language(s) for image-only PDFs (e.g. "eng", "hin+eng" for Hindi+English)
     TESSERACT_LANG: str = os.getenv("TESSERACT_LANG", "eng")
 

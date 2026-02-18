@@ -1,4 +1,3 @@
-import math
 from typing import Optional
 
 import numpy as np
@@ -25,15 +24,22 @@ def find_most_similar_claim(
     existing_claims: list[dict],
     text_field: str = "extracted_text",
     top_k: int = 1,
+    new_embedding: Optional[list[float]] = None,
 ) -> list[tuple[dict, float]]:
     """
-    Compare new claim text to existing claims via embeddings.
+    Compare new claim to existing claims via embeddings.
+    If new_embedding is provided, use it; otherwise embed new_text.
     Returns list of (claim_doc, duplication_pct) sorted by similarity descending.
     """
-    if not new_text or not existing_claims:
+    if not existing_claims:
+        return []
+    if new_embedding is not None:
+        new_emb = new_embedding
+    elif new_text:
+        new_emb = get_embedding(new_text)
+    else:
         return []
 
-    new_emb = get_embedding(new_text)
     results: list[tuple[dict, float]] = []
 
     for claim in existing_claims:

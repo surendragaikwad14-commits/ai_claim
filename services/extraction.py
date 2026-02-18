@@ -11,10 +11,12 @@ _MIN_EMBEDDED_TEXT_LEN = 10
 
 
 def _extract_with_ocr(file_bytes: bytes) -> str:
-    """Extract text from PDF using Tesseract OCR (for image-only / screenshot PDFs)."""
+    """Extract text from PDF using Tesseract OCR (for image-only / screenshot PDFs).
+    Uses TESSERACT_LANG from config (e.g. 'eng', 'hin+eng' for Hindi+English)."""
     try:
         from pdf2image import convert_from_bytes
         import pytesseract
+        from config import settings
     except ImportError as e:
         logger.warning("OCR fallback unavailable (missing pdf2image or pytesseract): %s", e)
         return ""
@@ -23,12 +25,13 @@ def _extract_with_ocr(file_bytes: bytes) -> str:
     except Exception as e:
         logger.warning("Could not convert PDF to images (install poppler): %s", e)
         return ""
+    lang = getattr(settings, "TESSERACT_LANG", "eng") or "eng"
     text_parts = []
     for img in images:
         try:
-            text_parts.append(pytesseract.image_to_string(img))
+            text_parts.append(pytesseract.image_to_string(img, lang=lang))
         except Exception as e:
-            logger.warning("Tesseract OCR failed (install tesseract on system): %s", e)
+            logger.warning("Tesseract OCR failed (lang=%s, install tesseract and language pack): %s", lang, e)
             return ""
     return "\n\n".join(p.strip() for p in text_parts if p and p.strip())
 

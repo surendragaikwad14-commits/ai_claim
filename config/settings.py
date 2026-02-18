@@ -26,5 +26,8 @@ class Settings:
     # Similarity threshold (treat as potential duplicate above this %)
     DUPLICATION_THRESHOLD_PCT: float = float(os.getenv("DUPLICATION_THRESHOLD_PCT", "70"))
 
+    # OCR language(s) for image-only PDFs (e.g. "eng", "hin+eng" for Hindi+English)
+    TESSERACT_LANG: str = os.getenv("TESSERACT_LANG", "eng")
+
 
 settings = Settings()
